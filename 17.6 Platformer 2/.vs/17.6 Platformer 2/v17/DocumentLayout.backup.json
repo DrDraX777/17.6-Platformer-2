@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|c:\\users\\drdra\\desktop\\unitylesson\\17.6 platformer 2\\17.6-platformer-2\\17.6 platformer 2\\assets\\scripts\\knightcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\knightcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "KnightController.cs",
+              "DocumentMoniker": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\KnightController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\KnightController.cs",
+              "ToolTip": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\KnightController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\KnightController.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAowGAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T04:31:04.291Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
