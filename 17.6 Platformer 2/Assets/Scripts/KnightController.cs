@@ -1,10 +1,22 @@
 using UnityEngine;
+using System.Collections;
 
 public class KnightController : MonoBehaviour
 {
     [Header("Настройки Движения")]
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
+
+    [Header("Настройки Приседания")]
+    public bool canMoveWhileCrouching = true;
+    public float crouchMoveSpeedFactor = 0.5f;
+
+    [Header("Настройки Атаки")]
+    [Tooltip("Длительность состояния обычной/присевшей атаки")]
+    public float groundAttackDuration = 0.5f;
+    [Tooltip("Длительность состояния атаки в прыжке")]
+    public float jumpAttackDuration = 0.4f; // Может быть короче или длиннее
+    private bool isAttacking = false;
 
     [Header("Проверка Земли")]
     public Transform groundCheck;
@@ -22,9 +34,15 @@ public class KnightController : MonoBehaviour
     // Имена параметров аниматора
     private const string ANIM_IS_RUNNING = "IsRunning";
     private const string ANIM_IS_JUMPING = "IsJumping";
+    private const string ANIM_IS_CROUCH = "IsCrouch";
+    private const string ANIM_IS_CROUCH_WALK = "IsCrouchWalk";
+    private const string ANIM_IS_ATTACK_1 = "IsAttack1";
+    private const string ANIM_IS_CROUCH_ATTACK = "IsCrouchAttack";
+    private const string ANIM_IS_JUMP_ATTACK = "IsJumpAttack"; // <--- НОВЫЙ ПАРАМЕТР
 
     void Awake()
     {
+        // ... (Awake без изменений) ...
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -38,67 +56,197 @@ public class KnightController : MonoBehaviour
 
     void Update()
     {
-        // 1. Проверка, на земле ли мы
+        // Если мы уже в какой-либо атаке, прерываем обработку нового ввода для атаки/движения
+        if (isAttacking)
+        {
+            return;
+        }
+
         CheckIfGrounded();
-        Debug.Log("isGrounded: " + isGrounded + " | Animator IsJumping: " + (animator != null ? animator.GetBool(ANIM_IS_JUMPING).ToString() : "N/A")); // <--- ЛОГ ДЛЯ ISGROUNDED
-
-        // 2. Получаем горизонтальный ввод
         horizontalInput = Input.GetAxisRaw("Horizontal");
+        bool isCurrentlyCrouching = (animator != null && animator.GetBool(ANIM_IS_CROUCH));
 
-        // 3. Обработка прыжка
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        // Обработка прыжка
+        if (Input.GetButtonDown("Jump") && isGrounded && !isCurrentlyCrouching && !isAttacking)
         {
             Jump();
         }
 
-        // 4. Обновляем анимацию
-        UpdateAnimationState();
+        // Обработка АТАКИ (ЛКМ - Fire1 по умолчанию)
+        if (Input.GetButtonDown("Fire1") && !isAttacking) // Проверяем !isAttacking здесь, чтобы не начать новую атаку во время кулдауна
+        {
+            HandleAttack();
+        }
 
-        // 5. Поворот спрайта
+        UpdateAnimationState();
         FlipSprite();
     }
 
     void FixedUpdate()
     {
-        // ВОЗВРАЩАЕМ ДВИЖЕНИЕ ПЕРСОНАЖА
-        rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
+        // Если атакуем (любой тип атаки), возможно, захотим ограничить движение
+        if (isAttacking)
+        {
+            // Для атаки в прыжке можно разрешить небольшое горизонтальное движение или оставить как есть
+            // Для наземных атак мы останавливали: rb.velocity = new Vector2(0, rb.velocity.y);
+            // Пока оставим универсальную остановку, но это можно настроить
+            if (isGrounded) // Останавливаем горизонтальное движение только для наземных атак
+            {
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
+            // Для jump attack можно не менять rb.velocity.x, чтобы сохранить инерцию
+            return;
+        }
+        // ... (остальной код FixedUpdate для движения без изменений) ...
+        float currentAppliedSpeed = moveSpeed;
+        bool isCurrentlyCrouchingOnGround = (animator != null && animator.GetBool(ANIM_IS_CROUCH) && isGrounded);
+
+        if (isCurrentlyCrouchingOnGround)
+        {
+            if (canMoveWhileCrouching)
+            {
+                currentAppliedSpeed *= crouchMoveSpeedFactor;
+            }
+        }
+        rb.linearVelocity = new Vector2(horizontalInput * currentAppliedSpeed, rb.linearVelocity.y);
     }
+
+    void HandleAttack()
+    {
+        isAttacking = true; // Устанавливаем общий флаг атаки
+
+        if (!isGrounded) // Атака в прыжке
+        {
+            animator.SetBool(ANIM_IS_JUMP_ATTACK, true);
+            Debug.Log("Jump Attack!");
+            // Сбрасываем другие потенциально активные состояния
+            //animator.SetBool(ANIM_IS_JUMPING, false); // Атака в прыжке заменяет обычную анимацию прыжка
+            StartCoroutine(AttackCooldown(jumpAttackDuration, false, false, true));
+        }
+        else // Наземные атаки
+        {
+            bool isCurrentlyCrouching = animator.GetBool(ANIM_IS_CROUCH);
+            bool isCurrentlyCrouchWalking = animator.GetBool(ANIM_IS_CROUCH_WALK);
+
+            if (isCurrentlyCrouching || isCurrentlyCrouchWalking)
+            {
+                animator.SetBool(ANIM_IS_CROUCH_ATTACK, true);
+                Debug.Log("Crouch Attack!");
+                StartCoroutine(AttackCooldown(groundAttackDuration, false, true, false));
+            }
+            else
+            {
+                animator.SetBool(ANIM_IS_ATTACK_1, true);
+                Debug.Log("Normal Attack!");
+                StartCoroutine(AttackCooldown(groundAttackDuration, true, false, false));
+            }
+            // Сбросить флаги других состояний, которые могут конфликтовать с наземной атакой
+            animator.SetBool(ANIM_IS_RUNNING, false);
+            animator.SetBool(ANIM_IS_JUMPING, false); // На земле мы не прыгаем
+        }
+    }
+
+    // Изменяем AttackCooldown, чтобы он принимал информацию о типе атаки для сброса
+    IEnumerator AttackCooldown(float duration, bool isNormalAttack, bool isCrouchAttack, bool isJumpAttackFlag)
+    {
+        yield return new WaitForSeconds(duration);
+
+        if (isNormalAttack) animator.SetBool(ANIM_IS_ATTACK_1, false);
+        if (isCrouchAttack) animator.SetBool(ANIM_IS_CROUCH_ATTACK, false);
+        if (isJumpAttackFlag) animator.SetBool(ANIM_IS_JUMP_ATTACK, false);
+
+        isAttacking = false;
+
+        // После завершения атаки в прыжке, если мы все еще в воздухе, нужно вернуть анимацию прыжка/падения
+        if (isJumpAttackFlag && !isGrounded && animator != null)
+        {
+            animator.SetBool(ANIM_IS_JUMPING, true); // Или IsFalling, если есть
+        }
+    }
+
 
     void Jump()
     {
+        if (isAttacking) return;
+        // ... (остальной код Jump без изменений) ...
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        // animator.SetBool(ANIM_IS_JUMPING, true); // По-прежнему убрано, пусть решает UpdateAnimationState
+        if (animator != null)
+        {
+            animator.SetBool(ANIM_IS_JUMPING, true);
+            animator.SetBool(ANIM_IS_RUNNING, false);
+            animator.SetBool(ANIM_IS_CROUCH, false);
+            animator.SetBool(ANIM_IS_CROUCH_WALK, false);
+            animator.SetBool(ANIM_IS_ATTACK_1, false);
+            animator.SetBool(ANIM_IS_CROUCH_ATTACK, false);
+            animator.SetBool(ANIM_IS_JUMP_ATTACK, false); // Добавляем сброс
+        }
     }
 
     void CheckIfGrounded()
     {
+        bool wasGrounded = isGrounded; // Запоминаем предыдущее состояние
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+        // Если мы только что приземлились И НЕ атакуем в прыжке
+        if (!wasGrounded && isGrounded && animator != null && !animator.GetBool(ANIM_IS_JUMP_ATTACK))
+        {
+            animator.SetBool(ANIM_IS_JUMPING, false);
+            // animator.SetBool(ANIM_IS_FALLING, false); // Если есть
+        }
     }
 
     void UpdateAnimationState()
     {
-        if (animator == null) return;
+        if (animator == null || isAttacking) return; // Не обновляем, если атакуем
+        // ... (остальной код UpdateAnimationState без изменений) ...
+        bool wantsToCrouch = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+        bool hasHorizontalInput = Mathf.Abs(horizontalInput) > 0.01f;
 
-        if (!isGrounded) // Если мы в воздухе
+        if (!isGrounded) // В воздухе (и не атакуем в прыжке, т.к. isAttacking проверен выше)
         {
-            animator.SetBool(ANIM_IS_JUMPING, true);
-            animator.SetBool(ANIM_IS_RUNNING, false); // Бег выключен в воздухе
+            // Если мы не в анимации атаки в прыжке, то устанавливаем IsJumping
+            if (!animator.GetBool(ANIM_IS_JUMP_ATTACK))
+            {
+                animator.SetBool(ANIM_IS_JUMPING, true);
+            }
+            animator.SetBool(ANIM_IS_RUNNING, false);
+            animator.SetBool(ANIM_IS_CROUCH, false);
+            animator.SetBool(ANIM_IS_CROUCH_WALK, false);
         }
-        else // Если мы на земле
+        else // На земле
         {
-            animator.SetBool(ANIM_IS_JUMPING, false);
+            animator.SetBool(ANIM_IS_JUMPING, false); // На земле мы не в прыжке (если не только что приземлились и isAttacking еще true)
 
-            // Логика для бега (когда мы на земле)
-            bool isRunning = Mathf.Abs(horizontalInput) > 0.01f;
-            animator.SetBool(ANIM_IS_RUNNING, isRunning);
+            if (wantsToCrouch)
+            {
+                animator.SetBool(ANIM_IS_CROUCH, true);
+                animator.SetBool(ANIM_IS_RUNNING, false);
+                if (canMoveWhileCrouching && hasHorizontalInput)
+                {
+                    animator.SetBool(ANIM_IS_CROUCH_WALK, true);
+                }
+                else
+                {
+                    animator.SetBool(ANIM_IS_CROUCH_WALK, false);
+                }
+            }
+            else
+            {
+                animator.SetBool(ANIM_IS_CROUCH, false);
+                animator.SetBool(ANIM_IS_CROUCH_WALK, false);
+                animator.SetBool(ANIM_IS_RUNNING, hasHorizontalInput);
+            }
         }
     }
 
     void FlipSprite()
     {
+        // ... (код FlipSprite без изменений, возможно, добавить проверку на атаку в прыжке для блокировки поворота) ...
         if (spriteRenderer == null) return;
-
-        // Поворачиваем, только если есть горизонтальный ввод
+        // if (isAttacking && (animator.GetBool(ANIM_IS_ATTACK_1) || animator.GetBool(ANIM_IS_CROUCH_ATTACK) || animator.GetBool(ANIM_IS_JUMP_ATTACK)))
+        // {
+        //     return; // Не поворачивать во время любой атаки
+        // }
         if (Mathf.Abs(horizontalInput) > 0.01f)
         {
             if ((horizontalInput > 0 && !isFacingRight) || (horizontalInput < 0 && isFacingRight))
@@ -111,6 +259,7 @@ public class KnightController : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
+        // ... (OnDrawGizmosSelected без изменений) ...
         if (groundCheck == null) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
