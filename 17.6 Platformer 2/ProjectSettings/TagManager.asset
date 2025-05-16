@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Hazard
+  - DeathZone
   layers:
   - Default
   - TransparentFX
@@ -12,8 +14,8 @@ TagManager:
   - Water
   - UI
   - BackGorund
-  - 
-  - 
+  - Water
+  - Platform
   - 
   - 
   - 
@@ -43,6 +45,9 @@ TagManager:
     locked: 0
   - name: BackGorund
     uniqueID: 125775055
+    locked: 0
+  - name: Water
+    uniqueID: 4209725633
     locked: 0
   - name: Ground
     uniqueID: 1351226639
