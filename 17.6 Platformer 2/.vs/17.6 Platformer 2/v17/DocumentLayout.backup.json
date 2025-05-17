@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|c:\\users\\drdra\\desktop\\unitylesson\\17.6 platformer 2\\17.6-platformer-2\\17.6 platformer 2\\assets\\scripts\\camerafollow2d.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\camerafollow2d.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|c:\\users\\drdra\\desktop\\unitylesson\\17.6 platformer 2\\17.6-platformer-2\\17.6 platformer 2\\assets\\scripts\\knightcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\knightcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\assets\\scripts\\playerinteractions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playerinteractions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\assets\\scripts\\knightcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\knightcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\assets\\scripts\\floatingbox.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\floatingbox.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|c:\\users\\drdra\\desktop\\unitylesson\\17.6 platformer 2\\17.6-platformer-2\\17.6 platformer 2\\assets\\scripts\\platformmotorcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\platformmotorcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\assets\\scripts\\camerafollow2d.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2204A57B-A09A-BA65-0CC1-E1B1AB89A280}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\camerafollow2d.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,11 +30,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
+              "Title": "PlatformMotorControl.cs",
+              "DocumentMoniker": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\PlatformMotorControl.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PlatformMotorControl.cs",
+              "ToolTip": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\PlatformMotorControl.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PlatformMotorControl.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAQwDoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T08:02:01.078Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "CameraFollow2D.cs",
               "DocumentMoniker": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\CameraFollow2D.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\CameraFollow2D.cs",
@@ -43,26 +60,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "FloatingBox.cs",
               "DocumentMoniker": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\FloatingBox.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\FloatingBox.cs",
               "ToolTip": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\FloatingBox.cs",
               "RelativeToolTip": "Assets\\Scripts\\FloatingBox.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEoAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAABkAAAAAAAAAAAAgwEwAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-16T05:40:20.374Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "PlayerInteractions.cs",
               "DocumentMoniker": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\PlayerInteractions.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerInteractions.cs",
               "ToolTip": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\PlayerInteractions.cs",
               "RelativeToolTip": "Assets\\Scripts\\PlayerInteractions.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAowEYAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAAK0AAAAAAAAAAAAuwNYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-16T03:12:04.334Z",
               "EditorCaption": ""
@@ -75,7 +92,7 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\KnightController.cs",
               "ToolTip": "C:\\Users\\drdra\\Desktop\\unitylesson\\17.6 Platformer 2\\17.6-Platformer-2\\17.6 Platformer 2\\Assets\\Scripts\\KnightController.cs",
               "RelativeToolTip": "Assets\\Scripts\\KnightController.cs",
-              "ViewState": "AgIAAKUAAAAAAAAAAAAQwMEAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAALsBAAAAAAAAAAAowOMBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-14T04:31:04.291Z",
               "EditorCaption": ""

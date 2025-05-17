@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Hazard
   - DeathZone
+  - Checkpoint
   layers:
   - Default
   - TransparentFX
@@ -16,7 +17,7 @@ TagManager:
   - BackGorund
   - Water
   - Platform
-  - 
+  - Obsticle
   - 
   - 
   - 
@@ -54,6 +55,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 776727233
+    locked: 0
+  - name: FrontObsticle
+    uniqueID: 258412879
     locked: 0
   m_RenderingLayers:
   - Default

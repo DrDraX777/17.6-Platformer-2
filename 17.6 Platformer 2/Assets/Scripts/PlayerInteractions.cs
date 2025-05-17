@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerInteractions : MonoBehaviour
 {
@@ -17,6 +18,12 @@ public class PlayerInteractions : MonoBehaviour
     // public float delayBeforeRespawn = 0.5f; 
     [Tooltip("Примерная длительность анимации смерти в секундах. Используется для ожидания.")]
     public float deathAnimationActualDuration = 1.0f; // <--- ВАЖНО: Настрой это значение!
+
+    [Header("Настройки Чекпоинтов")]
+    [Tooltip("Список всех чекпоинтов на уровне в порядке их предполагаемого прохождения. PlayerInteractions будет использовать ID из скрипта Checkpoint.")]
+    public List<Checkpoint> checkpointsOnLevel = new List<Checkpoint>(); // Список всех чекпоинтов
+    private int lastActivatedCheckpointID = -1; // ID последнего активированного чекпоинта (-1 означает, что ни один еще не активирован)
+    private Transform currentRespawnPoint; // Текущая активная точка респауна
 
     private Renderer playerRenderer;
     private Rigidbody2D playerRigidbody;
@@ -42,11 +49,25 @@ public class PlayerInteractions : MonoBehaviour
         if (playerControllerScript == null) Debug.LogWarning("Скрипт контроллера игрока не найден. Отключение управления может не работать.", this);
         if (playerRenderer == null) Debug.LogError("Renderer не найден! Моргание не будет работать.", this);
 
-        if (startPoint == null)
+       
+        if (startPoint != null)
         {
-            Debug.LogWarning("'Start Point' не назначен! Респаун на начальной позиции.", this);
-            initialStartPosition = transform.position;
+            currentRespawnPoint = startPoint; // Начальная точка респауна по умолчанию
+            initialStartPosition = startPoint.position; // Сохраняем на всякий случай
         }
+        else
+        {
+            Debug.LogWarning("'Start Point' не назначен! Респаун на начальной позиции игрока в сцене.", this);
+            initialStartPosition = transform.position;
+            currentRespawnPoint = transform; // Респаун на месте старта игрока, если startPoint не указан
+        }
+
+        // Сортируем чекпоинты по их ID на всякий случай, если они добавлены в инспекторе не по порядку
+        // Хотя основная логика будет полагаться на lastActivatedCheckpointID
+        checkpointsOnLevel.Sort((cp1, cp2) => cp1.ID.CompareTo(cp2.ID));
+
+        // Можно добавить логику загрузки сохраненного чекпоинта, если есть система сохранений
+        // LoadLastCheckpoint(); 
     }
 
     // Оставляем только OnTriggerEnter2D, если вода - это триггер
@@ -63,14 +84,59 @@ public class PlayerInteractions : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Этот метод сработает для триггер-зоны воды с тегом "Hazard"
+        if (isRespawning) return; // Если уже респаунимся, не обрабатываем новые триггеры
+
         if (other.CompareTag("Hazard"))
         {
             HandleHazardInteraction();
         }
-        if (other.CompareTag("DeathZone"))
+        else if (other.CompareTag("DeathZone")) // Если у тебя есть отдельный тег для зон мгновенной смерти
         {
             HandleHazardInteraction();
+        }
+        // --- НАЧАЛО НОВОГО КОДА ДЛЯ ЧЕКПОИНТОВ ---
+        else if (other.CompareTag("Checkpoint")) // Убедись, что у объектов чекпоинтов есть этот тег
+        {
+            Checkpoint checkpoint = other.GetComponent<Checkpoint>();
+            if (checkpoint != null)
+            {
+                TryActivateCheckpoint(checkpoint);
+            }
+        }
+        // --- КОНЕЦ НОВОГО КОДА ДЛЯ ЧЕКПОИНТОВ ---
+    }
+
+    // Этот метод будет вызываться из скрипта Checkpoint.cs или из OnTriggerEnter2D здесь
+    public bool TryActivateCheckpoint(Checkpoint checkpointToActivate)
+    {
+        if (checkpointToActivate == null || checkpointToActivate.IsActivated)
+        {
+            // Debug.Log("Попытка активировать null или уже активированный чекпоинт.");
+            return false; // Чекпоинт не существует или уже активирован самим чекпоинтом
+        }
+
+        // Активируем чекпоинт только если его ID больше, чем у последнего активированного
+        if (checkpointToActivate.ID > lastActivatedCheckpointID)
+        {
+            lastActivatedCheckpointID = checkpointToActivate.ID;
+            if (checkpointToActivate.respawnTargetPoint != null)
+            {
+                currentRespawnPoint = checkpointToActivate.respawnTargetPoint; // Обновляем текущую точку респауна
+                Debug.Log($"Новая точка респауна установлена: Чекпоинт ID {lastActivatedCheckpointID} ({currentRespawnPoint.name})");
+            }
+            else
+            {
+                Debug.Log($"Чекпоинт ID {lastActivatedCheckpointID} ({checkpointToActivate.name}) активирован, но не имеет своей точки респауна. Используется предыдущая.");
+            }
+
+            // Здесь можно добавить логику сохранения прогресса (например, PlayerPrefs.SetInt("LastCheckpointID", lastActivatedCheckpointID);)
+
+            return true; // Чекпоинт успешно активирован
+        }
+        else
+        {
+            // Debug.Log($"Попытка активировать чекпоинт ID {checkpointToActivate.ID}, но уже активен чекпоинт с ID {lastActivatedCheckpointID} или более новым.");
+            return false; // Этот чекпоинт старее или такой же, как уже активированный
         }
     }
 
@@ -152,18 +218,20 @@ public class PlayerInteractions : MonoBehaviour
             yield return null; // Даем кадр на обновление аниматора
         }
 
-        // 4. Перемещение игрока НА ТОЧКУ РЕСПАУНА
-        // (Если игрок был невидим до этого, он станет видимым здесь, но по текущей логике он видим)
+        // 4. Перемещение игрока НА ТЕКУЩУЮ ТОЧКУ РЕСПАУНА
         if (playerRenderer != null) playerRenderer.enabled = true;
 
-        if (startPoint != null)
+        // --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
+        if (currentRespawnPoint != null) // Используем currentRespawnPoint
         {
-            transform.position = startPoint.position;
+            transform.position = currentRespawnPoint.position;
         }
-        else
+        else // Если currentRespawnPoint каким-то образом null, используем initialStartPosition
         {
             transform.position = initialStartPosition;
+            Debug.LogWarning("currentRespawnPoint был null, респаун на initialStartPosition.");
         }
+        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
         // 5. ВОССТАНОВИТЬ ФИЗИКУ перед морганием
         if (playerRigidbody != null)
@@ -200,16 +268,4 @@ public class PlayerInteractions : MonoBehaviour
     
 }
 
-    public void SetNewStartPoint(Transform newStartPoint)
-    {
-        if (newStartPoint != null)
-        {
-            startPoint = newStartPoint;
-            Debug.Log("Новая точка респауна установлена: " + newStartPoint.name);
-        }
-        else
-        {
-            Debug.LogWarning("Попытка установить пустую точку респауна.");
-        }
-    }
 }

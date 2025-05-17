@@ -36,25 +36,44 @@ public class FloatingBox : MonoBehaviour
         }
     }
 
+    // FloatingBox.cs
     void Respawn()
     {
         Debug.Log(gameObject.name + " упал в DeathZone. Респаун...");
 
-        // Определяем позицию для респауна
-        Vector3 respawnPosition = (spawnPoint != null) ? spawnPoint.position : initialPosition;
+        // --- НАЧАЛО НОВОГО КОДА: ОТКРЕПЛЕНИЕ ДОЧЕРНИХ ИГРОКОВ ---
+        // Перебираем всех прямых дочерних объектов
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child = transform.GetChild(i);
+            // Проверяем, является ли дочерний объект игроком (по тегу или компоненту)
+            if (child.CompareTag("Player")) // Убедись, что у твоего игрока есть тег "Player"
+            {
+                // Открепляем игрока
+                child.SetParent(null);
+                Debug.Log("Игрок " + child.name + " откреплен от ящика перед респауном ящика.");
 
-        // Перемещаем ящик
+                // Опционально: можно попытаться безопасно "сбросить" игрока с ящика,
+                // например, придав ему небольшой импульс или переместив на ближайшую безопасную точку,
+                // но простое открепление уже предотвратит телепортацию вместе с ящиком.
+                // Игрок просто упадет дальше под действием гравитации.
+            }
+            // Если нужно проверять по компоненту:
+            // KnightController playerOnBox = child.GetComponent<KnightController>();
+            // if (playerOnBox != null) {
+            //     child.SetParent(null);
+            // }
+        }
+        // --- КОНЕЦ НОВОГО КОДА ---
+
+        Vector3 respawnPosition = (spawnPoint != null) ? spawnPoint.position : initialPosition;
         transform.position = respawnPosition;
 
-        // Сбрасываем скорость и вращение Rigidbody2D
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
         }
-
-        // Опционально: можно добавить здесь какие-либо другие действия при респауне,
-        // например, проиграть звук или эффект частиц.
     }
 
     // Для отладки, чтобы видеть точку респауна в редакторе
